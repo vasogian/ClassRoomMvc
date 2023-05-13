@@ -1,3 +1,6 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using ClassRoomMvc.Data;
 namespace ClassRoomMvc
 {
     public class Program
@@ -5,6 +8,8 @@ namespace ClassRoomMvc
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddDbContext<ClassRoomMvcContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("ClassRoomMvcContext") ?? throw new InvalidOperationException("Connection string 'ClassRoomMvcContext' not found.")));
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
