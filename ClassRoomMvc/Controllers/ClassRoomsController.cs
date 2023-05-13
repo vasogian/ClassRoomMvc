@@ -7,42 +7,41 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ClassRoomMvc.Data;
 using ClassRoomMvc.Models;
+using ClassRoomMvc.Services;
 
 namespace ClassRoomMvc.Controllers
 {
     public class ClassRoomsController : Controller
     {
-        private readonly ClassRoomMvcContext _context;
+        private readonly ClassRoomService _service;
 
-        public ClassRoomsController(ClassRoomMvcContext context)
+        public ClassRoomsController(ClassRoomService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: ClassRooms
         public async Task<IActionResult> Index()
         {
-              return _context.ClassRoom != null ? 
-                          View(await _context.ClassRoom.ToListAsync()) :
-                          Problem("Entity set 'ClassRoomMvcContext.ClassRoom'  is null.");
+            var getClassRooms = await _service.GetAllClassRooms();
+            if (!getClassRooms.Any())
+            {
+                return Problem("Entity set 'ClassRoomMvcContext.ClassRoom'  is null.");
+            }
+
+            return View(getClassRooms);
+
         }
 
         // GET: ClassRooms/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null || _context.ClassRoom == null)
+            var selectedClassRoom = await _service.GetClassRoom(id);
+            if (selectedClassRoom == null)
             {
                 return NotFound();
             }
-
-            var classRoom = await _context.ClassRoom
-                .FirstOrDefaultAsync(m => m.ClassRoomId == id);
-            if (classRoom == null)
-            {
-                return NotFound();
-            }
-
-            return View(classRoom);
+            return View(selectedClassRoom);
         }
 
         // GET: ClassRooms/Create
@@ -150,14 +149,14 @@ namespace ClassRoomMvc.Controllers
             {
                 _context.ClassRoom.Remove(classRoom);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ClassRoomExists(int id)
         {
-          return (_context.ClassRoom?.Any(e => e.ClassRoomId == id)).GetValueOrDefault();
+            return (_context.ClassRoom?.Any(e => e.ClassRoomId == id)).GetValueOrDefault();
         }
     }
 }

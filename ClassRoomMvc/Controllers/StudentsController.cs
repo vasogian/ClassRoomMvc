@@ -7,42 +7,42 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ClassRoomMvc.Data;
 using ClassRoomMvc.Models;
+using ClassRoomMvc.Services;
 
 namespace ClassRoomMvc.Controllers
 {
     public class StudentsController : Controller
     {
-        private readonly ClassRoomMvcContext _context;
+        private readonly StudentService _service;
 
-        public StudentsController(ClassRoomMvcContext context)
+        public StudentsController(StudentService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: Students
         public async Task<IActionResult> Index()
         {
-              return _context.Student != null ? 
-                          View(await _context.Student.ToListAsync()) :
-                          Problem("Entity set 'ClassRoomMvcContext.Student'  is null.");
+            var allStudents = await _service.GetStudents();
+            if (!allStudents.Any())
+            {
+                return Problem("Entity set 'ClassRoomMvcContext.Student'  is null.");
+            }
+
+            return View(allStudents);
+
         }
 
         // GET: Students/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> GetStudent(int id)
         {
-            if (id == null || _context.Student == null)
+            var selectedStudent = await _service.GetStudent(id);
+            if(selectedStudent == null)
             {
                 return NotFound();
             }
 
-            var student = await _context.Student
-                .FirstOrDefaultAsync(m => m.StudentId == id);
-            if (student == null)
-            {
-                return NotFound();
-            }
-
-            return View(student);
+            return View(selectedStudent);
         }
 
         // GET: Students/Create
@@ -56,12 +56,12 @@ namespace ClassRoomMvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("StudentId,StudentName,StudentLastName,ClassRoomId")] Student student)
+        public async Task<IActionResult> Create([Bind("StudentId,StudentName,StudentLastName")] Student student)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(student);
-                await _context.SaveChangesAsync();
+                await this._service.AddStudent(student);
+                
                 return RedirectToAction(nameof(Index));
             }
             return View(student);
@@ -150,14 +150,14 @@ namespace ClassRoomMvc.Controllers
             {
                 _context.Student.Remove(student);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool StudentExists(int id)
         {
-          return (_context.Student?.Any(e => e.StudentId == id)).GetValueOrDefault();
+            return (_context.Student?.Any(e => e.StudentId == id)).GetValueOrDefault();
         }
     }
 }
