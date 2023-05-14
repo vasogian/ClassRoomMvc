@@ -22,9 +22,8 @@ namespace ClassRoomMvc.Controllers
         // GET: Teachers
         public async Task<IActionResult> Index()
         {
-              return _context.Teacher != null ? 
-                          View(await _context.Teacher.ToListAsync()) :
-                          Problem("Entity set 'ClassRoomMvcContext.Teacher'  is null.");
+            var classRoomMvcContext = _context.Teacher.Include(t => t.ClassRoom);
+            return View(await classRoomMvcContext.ToListAsync());
         }
 
         // GET: Teachers/Details/5
@@ -36,6 +35,7 @@ namespace ClassRoomMvc.Controllers
             }
 
             var teacher = await _context.Teacher
+                .Include(t => t.ClassRoom)
                 .FirstOrDefaultAsync(m => m.TeacherId == id);
             if (teacher == null)
             {
@@ -48,6 +48,7 @@ namespace ClassRoomMvc.Controllers
         // GET: Teachers/Create
         public IActionResult Create()
         {
+            ViewData["ClassRoomId"] = new SelectList(_context.ClassRoom, "ClassRoomId", "ClassRoomId");
             return View();
         }
 
@@ -56,7 +57,7 @@ namespace ClassRoomMvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TeacherId,TeacherName,TeacherLastName,ClassRoomId")] Teacher teacher)
+        public async Task<IActionResult> Create([Bind("TeacherId,TeacherName,TeacherLastName,ClassRoom,ClassRoomId")] Teacher teacher)
         {
             if (ModelState.IsValid)
             {
@@ -64,6 +65,7 @@ namespace ClassRoomMvc.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ClassRoomId"] = new SelectList(_context.ClassRoom, "ClassRoomId", "ClassRoomId", teacher.ClassRoomId);
             return View(teacher);
         }
 
@@ -80,6 +82,7 @@ namespace ClassRoomMvc.Controllers
             {
                 return NotFound();
             }
+            ViewData["ClassRoomId"] = new SelectList(_context.ClassRoom, "ClassRoomId", "ClassRoomId", teacher.ClassRoomId);
             return View(teacher);
         }
 
@@ -115,6 +118,7 @@ namespace ClassRoomMvc.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ClassRoomId"] = new SelectList(_context.ClassRoom, "ClassRoomId", "ClassRoomId", teacher.ClassRoomId);
             return View(teacher);
         }
 
@@ -127,6 +131,7 @@ namespace ClassRoomMvc.Controllers
             }
 
             var teacher = await _context.Teacher
+                .Include(t => t.ClassRoom)
                 .FirstOrDefaultAsync(m => m.TeacherId == id);
             if (teacher == null)
             {
