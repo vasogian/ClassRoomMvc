@@ -16,7 +16,7 @@ namespace ClassRoomMvc
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<ClassRoomService>();
-            builder.Services.AddScoped<StudentService>();
+            
 
             var app = builder.Build();
 
