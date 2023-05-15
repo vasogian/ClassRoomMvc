@@ -4,7 +4,7 @@
 
 namespace ClassRoomMvc.Migrations
 {
-    public partial class changedstudentmodel15 : Migration
+    public partial class removedfkinstudentmodel2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

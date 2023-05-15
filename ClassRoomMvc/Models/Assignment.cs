@@ -6,7 +6,7 @@
         public string AssignmentName { get; set; }
         public decimal Grade { get; set; }
         public int ClassRoomId { get; set; }
-        public ICollection<Student> Students { get; }
+        public ICollection<Student> Students { get; } = new List<Student>();
 
     }
 }

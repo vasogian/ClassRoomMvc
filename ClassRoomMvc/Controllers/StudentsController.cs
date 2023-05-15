@@ -22,9 +22,9 @@ namespace ClassRoomMvc.Controllers
         // GET: Students
         public async Task<IActionResult> Index()
         {
-              return _context.Student != null ? 
-                          View(await _context.Student.ToListAsync()) :
-                          Problem("Entity set 'ClassRoomMvcContext.Student'  is null.");
+            return _context.Student != null ?
+                        View(await _context.Student.ToListAsync()) :
+                        Problem("Entity set 'ClassRoomMvcContext.Student'  is null.");
         }
 
         // GET: Students/Details/5
@@ -58,6 +58,9 @@ namespace ClassRoomMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("StudentId,StudentName,StudentLastName,ClassRoomId")] Student student)
         {
+            var classroomFromDb = await _context.ClassRoom.FirstOrDefaultAsync(x => x.ClassRoomId == 1);
+            var studentToBeAdded = student.ClassRoomId == classroomFromDb.ClassRoomId;
+
             if (ModelState.IsValid)
             {
                 _context.Add(student);
@@ -150,14 +153,14 @@ namespace ClassRoomMvc.Controllers
             {
                 _context.Student.Remove(student);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool StudentExists(int id)
         {
-          return (_context.Student?.Any(e => e.StudentId == id)).GetValueOrDefault();
+            return (_context.Student?.Any(e => e.StudentId == id)).GetValueOrDefault();
         }
     }
 }

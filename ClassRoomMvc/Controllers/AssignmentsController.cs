@@ -58,6 +58,9 @@ namespace ClassRoomMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("AssignmentId,AssignmentName,Grade,ClassRoomId")] Assignment assignment)
         {
+            var assignmentToBeAdded = assignment.ClassRoomId = 1;
+                
+
             if (ModelState.IsValid)
             {
                 _context.Add(assignment);
@@ -88,7 +91,7 @@ namespace ClassRoomMvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AssignmentId,AssignmentName,Grade,ClassRoomId")] Assignment assignment)
+        public async Task<IActionResult> Edit(int id, [Bind("AssignmentId,AssignmentName,ClassRoomId")] Assignment assignment)
         {
             if (id != assignment.AssignmentId)
             {

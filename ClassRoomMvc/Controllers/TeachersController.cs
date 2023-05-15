@@ -59,6 +59,7 @@ namespace ClassRoomMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("TeacherId,TeacherName,TeacherLastName,ClassRoom,ClassRoomId")] Teacher teacher)
         {
+
             if (ModelState.IsValid)
             {
                 _context.Add(teacher);

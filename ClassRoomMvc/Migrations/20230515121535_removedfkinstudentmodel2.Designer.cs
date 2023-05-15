@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClassRoomMvc.Migrations
 {
     [DbContext(typeof(ClassRoomMvcContext))]
-    [Migration("20230514154720_changedstudentmodel15")]
-    partial class changedstudentmodel15
+    [Migration("20230515121535_removedfkinstudentmodel2")]
+    partial class removedfkinstudentmodel2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -163,9 +163,11 @@ namespace ClassRoomMvc.Migrations
 
             modelBuilder.Entity("ClassRoomMvc.Models.Student", b =>
                 {
-                    b.HasOne("ClassRoomMvc.Models.ClassRoom", null)
+                    b.HasOne("ClassRoomMvc.Models.ClassRoom", "ClassRoom")
                         .WithMany("Students")
                         .HasForeignKey("ClassRoomId");
+
+                    b.Navigation("ClassRoom");
                 });
 
             modelBuilder.Entity("ClassRoomMvc.Models.Teacher", b =>
