@@ -30,6 +30,7 @@ namespace ClassRoomMvc.Controllers
         // GET: Students/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+
             if (id == null || _context.Student == null)
             {
                 return NotFound();
@@ -58,8 +59,6 @@ namespace ClassRoomMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("StudentId,StudentName,StudentLastName")] Student student)
         {
-            //var classroomFromDb = await _context.ClassRoom.FirstOrDefaultAsync(x => x.ClassRoomId == 1);
-            //var studentToBeAdded = student.ClassRoomId == classroomFromDb.ClassRoomId;
 
             if (ModelState.IsValid)
             {
@@ -82,6 +81,7 @@ namespace ClassRoomMvc.Controllers
             }
 
             var student = await _context.Student.FindAsync(id);
+
             if (student == null)
             {
                 return NotFound();
@@ -96,7 +96,7 @@ namespace ClassRoomMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("StudentId,StudentName,StudentLastName,ClassRoomId")] Student student)
         {
-            
+
             if (id != student.StudentId)
             {
                 return NotFound();
@@ -135,6 +135,7 @@ namespace ClassRoomMvc.Controllers
 
             var student = await _context.Student
                 .FirstOrDefaultAsync(m => m.StudentId == id);
+
             if (student == null)
             {
                 return NotFound();
@@ -153,12 +154,14 @@ namespace ClassRoomMvc.Controllers
                 return Problem("Entity set 'ClassRoomMvcContext.Student'  is null.");
             }
             var student = await _context.Student.FindAsync(id);
+
             if (student != null)
             {
                 _context.Student.Remove(student);
             }
 
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 

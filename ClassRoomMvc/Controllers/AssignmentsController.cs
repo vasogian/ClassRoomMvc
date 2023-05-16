@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ClassRoomMvc.Data;
@@ -22,9 +18,9 @@ namespace ClassRoomMvc.Controllers
         // GET: Assignments
         public async Task<IActionResult> Index()
         {
-              return _context.Assignment != null ? 
-                          View(await _context.Assignment.ToListAsync()) :
-                          Problem("Entity set 'ClassRoomMvcContext.Assignment'  is null.");
+            return _context.Assignment != null ?
+                        View(await _context.Assignment.ToListAsync()) :
+                        Problem("Entity set 'ClassRoomMvcContext.Assignment'  is null.");
         }
 
         // GET: Assignments/Details/5
@@ -59,8 +55,6 @@ namespace ClassRoomMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("AssignmentId,AssignmentName,Grade,ClassRoomId")] Assignment assignment)
         {
-            //var assignmentToBeAdded = assignment.ClassRoomId = 1;
-                
 
             if (ModelState.IsValid)
             {
@@ -155,14 +149,14 @@ namespace ClassRoomMvc.Controllers
             {
                 _context.Assignment.Remove(assignment);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool AssignmentExists(int id)
         {
-          return (_context.Assignment?.Any(e => e.AssignmentId == id)).GetValueOrDefault();
+            return (_context.Assignment?.Any(e => e.AssignmentId == id)).GetValueOrDefault();
         }
     }
 }
