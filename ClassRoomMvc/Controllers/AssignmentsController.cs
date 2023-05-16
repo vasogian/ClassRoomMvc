@@ -48,6 +48,7 @@ namespace ClassRoomMvc.Controllers
         // GET: Assignments/Create
         public IActionResult Create()
         {
+            ViewData["ClassRoomId"] = new SelectList(_context.ClassRoom, "ClassRoomId", "ClassRoomId");
             return View();
         }
 
@@ -58,7 +59,7 @@ namespace ClassRoomMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("AssignmentId,AssignmentName,Grade,ClassRoomId")] Assignment assignment)
         {
-            var assignmentToBeAdded = assignment.ClassRoomId = 1;
+            //var assignmentToBeAdded = assignment.ClassRoomId = 1;
                 
 
             if (ModelState.IsValid)
@@ -73,6 +74,7 @@ namespace ClassRoomMvc.Controllers
         // GET: Assignments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            ViewData["ClassRoomId"] = new SelectList(_context.ClassRoom, "ClassRoomId", "ClassRoomId");
             if (id == null || _context.Assignment == null)
             {
                 return NotFound();
@@ -91,7 +93,7 @@ namespace ClassRoomMvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AssignmentId,AssignmentName,ClassRoomId")] Assignment assignment)
+        public async Task<IActionResult> Edit(int id, [Bind("AssignmentId,AssignmentName,Grade,ClassRoomId")] Assignment assignment)
         {
             if (id != assignment.AssignmentId)
             {
