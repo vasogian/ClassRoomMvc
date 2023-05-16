@@ -9,6 +9,61 @@ namespace ClassRoomMvc.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "ClassRoom",
+                columns: table => new
+                {
+                    ClassRoomId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Capacity = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClassRoom", x => x.ClassRoomId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Assignment",
+                columns: table => new
+                {
+                    AssignmentId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AssignmentName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Grade = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ClassRoomId = table.Column<int>(type: "int", nullable: true),
+                    StudentId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Assignment", x => x.AssignmentId);
+                    table.ForeignKey(
+                        name: "FK_Assignment_ClassRoom_ClassRoomId",
+                        column: x => x.ClassRoomId,
+                        principalTable: "ClassRoom",
+                        principalColumn: "ClassRoomId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Student",
+                columns: table => new
+                {
+                    StudentId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StudentName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StudentLastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ClassRoomId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Student", x => x.StudentId);
+                    table.ForeignKey(
+                        name: "FK_Student_ClassRoom_ClassRoomId",
+                        column: x => x.ClassRoomId,
+                        principalTable: "ClassRoom",
+                        principalColumn: "ClassRoomId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Teacher",
                 columns: table => new
                 {
@@ -21,45 +76,8 @@ namespace ClassRoomMvc.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Teacher", x => x.TeacherId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ClassRoom",
-                columns: table => new
-                {
-                    ClassRoomId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TeacherId1 = table.Column<int>(type: "int", nullable: false),
-                    TeacherId = table.Column<int>(type: "int", nullable: false),
-                    StudentId = table.Column<int>(type: "int", nullable: false),
-                    AssignmentId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClassRoom", x => x.ClassRoomId);
                     table.ForeignKey(
-                        name: "FK_ClassRoom_Teacher_TeacherId1",
-                        column: x => x.TeacherId1,
-                        principalTable: "Teacher",
-                        principalColumn: "TeacherId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Assignment",
-                columns: table => new
-                {
-                    AssignmentId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AssignmentName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Grade = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ClassRoomId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Assignment", x => x.AssignmentId);
-                    table.ForeignKey(
-                        name: "FK_Assignment_ClassRoom_ClassRoomId",
+                        name: "FK_Teacher_ClassRoom_ClassRoomId",
                         column: x => x.ClassRoomId,
                         principalTable: "ClassRoom",
                         principalColumn: "ClassRoomId",
@@ -67,23 +85,26 @@ namespace ClassRoomMvc.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Student",
+                name: "AssignmentStudent",
                 columns: table => new
                 {
-                    StudentId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    StudentName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StudentLastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ClassRoomId = table.Column<int>(type: "int", nullable: false)
+                    AssignmentId = table.Column<int>(type: "int", nullable: false),
+                    StudentsStudentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Student", x => x.StudentId);
+                    table.PrimaryKey("PK_AssignmentStudent", x => new { x.AssignmentId, x.StudentsStudentId });
                     table.ForeignKey(
-                        name: "FK_Student_ClassRoom_ClassRoomId",
-                        column: x => x.ClassRoomId,
-                        principalTable: "ClassRoom",
-                        principalColumn: "ClassRoomId",
+                        name: "FK_AssignmentStudent_Assignment_AssignmentId",
+                        column: x => x.AssignmentId,
+                        principalTable: "Assignment",
+                        principalColumn: "AssignmentId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AssignmentStudent_Student_StudentsStudentId",
+                        column: x => x.StudentsStudentId,
+                        principalTable: "Student",
+                        principalColumn: "StudentId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -93,18 +114,30 @@ namespace ClassRoomMvc.Migrations
                 column: "ClassRoomId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClassRoom_TeacherId1",
-                table: "ClassRoom",
-                column: "TeacherId1");
+                name: "IX_AssignmentStudent_StudentsStudentId",
+                table: "AssignmentStudent",
+                column: "StudentsStudentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Student_ClassRoomId",
                 table: "Student",
                 column: "ClassRoomId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Teacher_ClassRoomId",
+                table: "Teacher",
+                column: "ClassRoomId",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AssignmentStudent");
+
+            migrationBuilder.DropTable(
+                name: "Teacher");
+
             migrationBuilder.DropTable(
                 name: "Assignment");
 
@@ -113,9 +146,6 @@ namespace ClassRoomMvc.Migrations
 
             migrationBuilder.DropTable(
                 name: "ClassRoom");
-
-            migrationBuilder.DropTable(
-                name: "Teacher");
         }
     }
 }

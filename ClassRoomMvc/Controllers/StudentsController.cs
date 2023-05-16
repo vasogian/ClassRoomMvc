@@ -56,10 +56,10 @@ namespace ClassRoomMvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("StudentId,StudentName,StudentLastName,ClassRoomId")] Student student)
+        public async Task<IActionResult> Create([Bind("StudentId,StudentName,StudentLastName")] Student student)
         {
-            var classroomFromDb = await _context.ClassRoom.FirstOrDefaultAsync(x => x.ClassRoomId == 1);
-            var studentToBeAdded = student.ClassRoomId == classroomFromDb.ClassRoomId;
+            //var classroomFromDb = await _context.ClassRoom.FirstOrDefaultAsync(x => x.ClassRoomId == 1);
+            //var studentToBeAdded = student.ClassRoomId == classroomFromDb.ClassRoomId;
 
             if (ModelState.IsValid)
             {
@@ -73,6 +73,9 @@ namespace ClassRoomMvc.Controllers
         // GET: Students/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+
+            ViewData["ClassRoomId"] = new SelectList(_context.ClassRoom, "ClassRoomId", "ClassRoomId");
+
             if (id == null || _context.Student == null)
             {
                 return NotFound();
@@ -93,6 +96,7 @@ namespace ClassRoomMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("StudentId,StudentName,StudentLastName,ClassRoomId")] Student student)
         {
+            
             if (id != student.StudentId)
             {
                 return NotFound();

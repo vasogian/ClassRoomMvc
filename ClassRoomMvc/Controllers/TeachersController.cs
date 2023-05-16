@@ -57,7 +57,7 @@ namespace ClassRoomMvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TeacherId,TeacherName,TeacherLastName,ClassRoom,ClassRoomId")] Teacher teacher)
+        public async Task<IActionResult> Create([Bind("TeacherId,TeacherName,TeacherLastName,ClassRoomId")] Teacher teacher)
         {
 
             if (ModelState.IsValid)

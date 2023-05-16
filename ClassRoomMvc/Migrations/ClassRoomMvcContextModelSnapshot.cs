@@ -49,11 +49,14 @@ namespace ClassRoomMvc.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ClassRoomId")
+                    b.Property<int?>("ClassRoomId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Grade")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("StudentId")
+                        .HasColumnType("int");
 
                     b.HasKey("AssignmentId");
 
@@ -154,18 +157,14 @@ namespace ClassRoomMvc.Migrations
                 {
                     b.HasOne("ClassRoomMvc.Models.ClassRoom", null)
                         .WithMany("Assignments")
-                        .HasForeignKey("ClassRoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ClassRoomId");
                 });
 
             modelBuilder.Entity("ClassRoomMvc.Models.Student", b =>
                 {
-                    b.HasOne("ClassRoomMvc.Models.ClassRoom", "ClassRoom")
+                    b.HasOne("ClassRoomMvc.Models.ClassRoom", null)
                         .WithMany("Students")
                         .HasForeignKey("ClassRoomId");
-
-                    b.Navigation("ClassRoom");
                 });
 
             modelBuilder.Entity("ClassRoomMvc.Models.Teacher", b =>
