@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ClassRoomMvc.Data;
@@ -22,9 +18,9 @@ namespace ClassRoomMvc.Controllers
         // GET: Teachers
         public async Task<IActionResult> Index()
         {
-              return _context.Teacher != null ? 
-                          View(await _context.Teacher.ToListAsync()) :
-                          Problem("Entity set 'ClassRoomMvcContext.Teacher'  is null.");
+            var classRoomMvcContext = _context.Teacher.Include(t => t.ClassRoom);
+
+            return View(await classRoomMvcContext.ToListAsync());
         }
 
         // GET: Teachers/Details/5
@@ -36,6 +32,7 @@ namespace ClassRoomMvc.Controllers
             }
 
             var teacher = await _context.Teacher
+                .Include(t => t.ClassRoom)
                 .FirstOrDefaultAsync(m => m.TeacherId == id);
             if (teacher == null)
             {
@@ -48,6 +45,7 @@ namespace ClassRoomMvc.Controllers
         // GET: Teachers/Create
         public IActionResult Create()
         {
+            ViewData["ClassRoomId"] = new SelectList(_context.ClassRoom, "ClassRoomId", "ClassRoomId");
             return View();
         }
 
@@ -58,12 +56,16 @@ namespace ClassRoomMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("TeacherId,TeacherName,TeacherLastName,ClassRoomId")] Teacher teacher)
         {
+
             if (ModelState.IsValid)
             {
                 _context.Add(teacher);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["ClassRoomId"] = new SelectList(_context.ClassRoom, "ClassRoomId", "ClassRoomId", teacher.ClassRoomId);
+
             return View(teacher);
         }
 
@@ -76,10 +78,13 @@ namespace ClassRoomMvc.Controllers
             }
 
             var teacher = await _context.Teacher.FindAsync(id);
+
             if (teacher == null)
             {
                 return NotFound();
             }
+            ViewData["ClassRoomId"] = new SelectList(_context.ClassRoom, "ClassRoomId", "ClassRoomId", teacher.ClassRoomId);
+
             return View(teacher);
         }
 
@@ -113,8 +118,12 @@ namespace ClassRoomMvc.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["ClassRoomId"] = new SelectList(_context.ClassRoom, "ClassRoomId", "ClassRoomId", teacher.ClassRoomId);
+
             return View(teacher);
         }
 
@@ -127,7 +136,9 @@ namespace ClassRoomMvc.Controllers
             }
 
             var teacher = await _context.Teacher
+                .Include(t => t.ClassRoom)
                 .FirstOrDefaultAsync(m => m.TeacherId == id);
+
             if (teacher == null)
             {
                 return NotFound();
@@ -146,18 +157,19 @@ namespace ClassRoomMvc.Controllers
                 return Problem("Entity set 'ClassRoomMvcContext.Teacher'  is null.");
             }
             var teacher = await _context.Teacher.FindAsync(id);
+
             if (teacher != null)
             {
                 _context.Teacher.Remove(teacher);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TeacherExists(int id)
         {
-          return (_context.Teacher?.Any(e => e.TeacherId == id)).GetValueOrDefault();
+            return (_context.Teacher?.Any(e => e.TeacherId == id)).GetValueOrDefault();
         }
     }
 }

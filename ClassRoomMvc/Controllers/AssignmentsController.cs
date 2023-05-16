@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ClassRoomMvc.Data;
@@ -22,9 +18,9 @@ namespace ClassRoomMvc.Controllers
         // GET: Assignments
         public async Task<IActionResult> Index()
         {
-              return _context.Assignment != null ? 
-                          View(await _context.Assignment.ToListAsync()) :
-                          Problem("Entity set 'ClassRoomMvcContext.Assignment'  is null.");
+            return _context.Assignment != null ?
+                        View(await _context.Assignment.ToListAsync()) :
+                        Problem("Entity set 'ClassRoomMvcContext.Assignment'  is null.");
         }
 
         // GET: Assignments/Details/5
@@ -48,6 +44,7 @@ namespace ClassRoomMvc.Controllers
         // GET: Assignments/Create
         public IActionResult Create()
         {
+            ViewData["ClassRoomId"] = new SelectList(_context.ClassRoom, "ClassRoomId", "ClassRoomId");
             return View();
         }
 
@@ -58,6 +55,7 @@ namespace ClassRoomMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("AssignmentId,AssignmentName,Grade,ClassRoomId")] Assignment assignment)
         {
+
             if (ModelState.IsValid)
             {
                 _context.Add(assignment);
@@ -70,6 +68,7 @@ namespace ClassRoomMvc.Controllers
         // GET: Assignments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            ViewData["ClassRoomId"] = new SelectList(_context.ClassRoom, "ClassRoomId", "ClassRoomId");
             if (id == null || _context.Assignment == null)
             {
                 return NotFound();
@@ -150,14 +149,14 @@ namespace ClassRoomMvc.Controllers
             {
                 _context.Assignment.Remove(assignment);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool AssignmentExists(int id)
         {
-          return (_context.Assignment?.Any(e => e.AssignmentId == id)).GetValueOrDefault();
+            return (_context.Assignment?.Any(e => e.AssignmentId == id)).GetValueOrDefault();
         }
     }
 }

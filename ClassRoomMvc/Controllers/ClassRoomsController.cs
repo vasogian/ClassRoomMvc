@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ClassRoomMvc.Data;
 using ClassRoomMvc.Models;
@@ -22,21 +17,25 @@ namespace ClassRoomMvc.Controllers
         // GET: ClassRooms
         public async Task<IActionResult> Index()
         {
-              return _context.ClassRoom != null ? 
-                          View(await _context.ClassRoom.ToListAsync()) :
-                          Problem("Entity set 'ClassRoomMvcContext.ClassRoom'  is null.");
+            return _context.ClassRoom != null ?
+                        View(await _context.ClassRoom.ToListAsync()) :
+                        Problem("Entity set 'ClassRoomMvcContext.ClassRoom'  is null.");
         }
 
         // GET: ClassRooms/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+
             if (id == null || _context.ClassRoom == null)
             {
                 return NotFound();
             }
 
             var classRoom = await _context.ClassRoom
+                .Include(x => x.Students)
+                .Include(x => x.Assignments)
                 .FirstOrDefaultAsync(m => m.ClassRoomId == id);
+
             if (classRoom == null)
             {
                 return NotFound();
@@ -48,6 +47,7 @@ namespace ClassRoomMvc.Controllers
         // GET: ClassRooms/Create
         public IActionResult Create()
         {
+
             return View();
         }
 
@@ -56,7 +56,7 @@ namespace ClassRoomMvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ClassRoomId,TeacherId,StudentId,AssignmentId")] ClassRoom classRoom)
+        public async Task<IActionResult> Create([Bind("ClassRoomId,Name,Capacity")] ClassRoom classRoom)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +88,7 @@ namespace ClassRoomMvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ClassRoomId,TeacherId,StudentId,AssignmentId")] ClassRoom classRoom)
+        public async Task<IActionResult> Edit(int id, [Bind("ClassRoomId,Name,Capacity")] ClassRoom classRoom)
         {
             if (id != classRoom.ClassRoomId)
             {
@@ -145,19 +145,22 @@ namespace ClassRoomMvc.Controllers
             {
                 return Problem("Entity set 'ClassRoomMvcContext.ClassRoom'  is null.");
             }
+
             var classRoom = await _context.ClassRoom.FindAsync(id);
+
             if (classRoom != null)
             {
                 _context.ClassRoom.Remove(classRoom);
             }
-            
+
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
         private bool ClassRoomExists(int id)
         {
-          return (_context.ClassRoom?.Any(e => e.ClassRoomId == id)).GetValueOrDefault();
+            return (_context.ClassRoom?.Any(e => e.ClassRoomId == id)).GetValueOrDefault();
         }
     }
 }
