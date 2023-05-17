@@ -18,27 +18,27 @@ namespace ClassRoomMvc.Controllers
         // GET: ClassRooms
         public async Task<IActionResult> Index()
         {
-			var classroomsFromDb = await _context.ClassRoom.ToListAsync();
-			var classroomViewModels = new List<ClassroomViewModel>();
+            var classroomsFromDb = await _context.ClassRoom.ToListAsync();
+            var classroomViewModels = new List<ClassroomViewModel>();
 
-			if (classroomsFromDb.Any())
-			{
-				foreach (var classroom in classroomsFromDb)
-				{
-					classroomViewModels.Add(new ClassroomViewModel
-					{
+            if (classroomsFromDb.Any())
+            {
+                foreach (var classroom in classroomsFromDb)
+                {
+                    classroomViewModels.Add(new ClassroomViewModel
+                    {
                         ClassroomId = classroom.ClassRoomId,
-						Assignments = classroom.Assignments,
-						Capacity = classroom.Capacity,
-						Name = classroom.Name,
-						Students = classroom.Students,
-						Teacher = classroom.Teacher,
-					});
-				}
-			}
+                        Assignments = classroom.Assignments,
+                        Capacity = classroom.Capacity,
+                        Name = classroom.Name,
+                        Students = classroom.Students,
+                        Teacher = classroom.Teacher,
+                    });
+                }
+            }
 
-			return View(classroomViewModels);
-		}
+            return View(classroomViewModels);
+        }
 
         // GET: ClassRooms/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -117,16 +117,16 @@ namespace ClassRoomMvc.Controllers
             {
                 return NotFound();
             }
-			var classroomToEdit = new UpdateClassroomViewModel()
-			{
+            var classroomToEdit = new UpdateClassroomViewModel()
+            {
                 ClassroomId = classRoom.ClassRoomId,
-				Name = classRoom.Name,
-				Students = classRoom.Students,
-				Capacity = classRoom.Capacity,
-				Assignments = classRoom.Assignments,
-				Teacher = classRoom.Teacher,
-			};
-			return View(classroomToEdit);
+                Name = classRoom.Name,
+                Students = classRoom.Students,
+                Capacity = classRoom.Capacity,
+                Assignments = classRoom.Assignments,
+                Teacher = classRoom.Teacher,
+            };
+            return View(classroomToEdit);
         }
 
         // POST: ClassRooms/Edit/5
@@ -137,7 +137,7 @@ namespace ClassRoomMvc.Controllers
         public async Task<IActionResult> Edit(int id, [Bind("Name,Capacity,ClassroomId")] UpdateClassroomViewModel classRoom)
         {
             if (id != classRoom.ClassroomId)
-            {              
+            {
                 return NotFound();
             }
 
