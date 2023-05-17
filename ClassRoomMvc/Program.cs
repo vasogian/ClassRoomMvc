@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using ClassRoomMvc.Data;
 using ClassRoomMvc.Services;
 
 namespace ClassRoomMvc
 {
-    public class Program
+	public class Program
     {
         public static void Main(string[] args)
         {
@@ -16,7 +15,7 @@ namespace ClassRoomMvc
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped<ClassRoomService>();
-            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            
 
 
             var app = builder.Build();

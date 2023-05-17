@@ -4,6 +4,7 @@ using ClassRoomMvc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClassRoomMvc.Migrations
 {
     [DbContext(typeof(ClassRoomMvcContext))]
-    partial class ClassRoomMvcContextModelSnapshot : ModelSnapshot
+    [Migration("20230517165611_RemoveFK")]
+    partial class RemoveFK
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

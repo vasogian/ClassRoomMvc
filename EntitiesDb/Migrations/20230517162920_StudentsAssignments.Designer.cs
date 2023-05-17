@@ -4,6 +4,7 @@ using ClassRoomMvc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClassRoomMvc.Migrations
 {
     [DbContext(typeof(ClassRoomMvcContext))]
-    partial class ClassRoomMvcContextModelSnapshot : ModelSnapshot
+    [Migration("20230517162920_StudentsAssignments")]
+    partial class StudentsAssignments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,6 +57,9 @@ namespace ClassRoomMvc.Migrations
                     b.Property<decimal>("Grade")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("StudentId")
+                        .HasColumnType("int");
+
                     b.HasKey("AssignmentId");
 
                     b.HasIndex("ClassRoomId");
@@ -89,6 +94,9 @@ namespace ClassRoomMvc.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StudentId"), 1L, 1);
+
+                    b.Property<int?>("AssignmentId")
+                        .HasColumnType("int");
 
                     b.Property<int?>("ClassRoomId")
                         .HasColumnType("int");

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ClassRoomMvc.Data;
 using ClassRoomMvc.Models;
+using ClassRoomMvc.ViewModels;
 
 namespace ClassRoomMvc.Controllers
 {
@@ -17,10 +18,27 @@ namespace ClassRoomMvc.Controllers
         // GET: ClassRooms
         public async Task<IActionResult> Index()
         {
-            return _context.ClassRoom != null ?
-                        View(await _context.ClassRoom.ToListAsync()) :
-                        Problem("Entity set 'ClassRoomMvcContext.ClassRoom'  is null.");
-        }
+			var classroomsFromDb = await _context.ClassRoom.ToListAsync();
+			var classroomViewModels = new List<ClassroomViewModel>();
+
+			if (classroomsFromDb.Any())
+			{
+				foreach (var classroom in classroomsFromDb)
+				{
+					classroomViewModels.Add(new ClassroomViewModel
+					{
+                        ClassroomId = classroom.ClassRoomId,
+						Assignments = classroom.Assignments,
+						Capacity = classroom.Capacity,
+						Name = classroom.Name,
+						Students = classroom.Students,
+						Teacher = classroom.Teacher,
+					});
+				}
+			}
+
+			return View(classroomViewModels);
+		}
 
         // GET: ClassRooms/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -41,7 +59,17 @@ namespace ClassRoomMvc.Controllers
                 return NotFound();
             }
 
-            return View(classRoom);
+            var selectedClassroom = new ClassroomViewModel()
+            {
+                ClassroomId = classRoom.ClassRoomId,
+                Name = classRoom.Name,
+                Capacity = classRoom.Capacity,
+                Teacher = classRoom.Teacher,
+                Assignments = classRoom.Assignments,
+                Students = classRoom.Students
+            };
+
+            return View(selectedClassroom);
         }
 
         // GET: ClassRooms/Create
@@ -56,11 +84,20 @@ namespace ClassRoomMvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ClassRoomId,Name,Capacity")] ClassRoom classRoom)
+        public async Task<IActionResult> Create([Bind("Name,Capacity")] ClassroomViewModel classRoom)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(classRoom);
+                var classroomToCreate = new ClassRoom()
+                {
+                    Assignments = classRoom.Assignments,
+                    Capacity = classRoom.Capacity,
+                    Name = classRoom.Name,
+                    Students = classRoom.Students,
+                    Teacher = classRoom.Teacher,
+                };
+
+                _context.Add(classroomToCreate);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -80,7 +117,16 @@ namespace ClassRoomMvc.Controllers
             {
                 return NotFound();
             }
-            return View(classRoom);
+			var classroomToEdit = new UpdateClassroomViewModel()
+			{
+                ClassroomId = classRoom.ClassRoomId,
+				Name = classRoom.Name,
+				Students = classRoom.Students,
+				Capacity = classRoom.Capacity,
+				Assignments = classRoom.Assignments,
+				Teacher = classRoom.Teacher,
+			};
+			return View(classroomToEdit);
         }
 
         // POST: ClassRooms/Edit/5
@@ -88,23 +134,33 @@ namespace ClassRoomMvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ClassRoomId,Name,Capacity")] ClassRoom classRoom)
+        public async Task<IActionResult> Edit(int id, [Bind("Name,Capacity,ClassroomId")] UpdateClassroomViewModel classRoom)
         {
-            if (id != classRoom.ClassRoomId)
-            {
+            if (id != classRoom.ClassroomId)
+            {              
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                var classroomToUpdate = new ClassRoom()
+                {
+                    ClassRoomId = classRoom.ClassroomId,
+                    Name = classRoom.Name,
+                    Students = classRoom.Students,
+                    Capacity = classRoom.Capacity,
+                    Assignments = classRoom.Assignments,
+                    Teacher = classRoom.Teacher,
+                };
+
                 try
                 {
-                    _context.Update(classRoom);
+                    _context.Update(classroomToUpdate);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ClassRoomExists(classRoom.ClassRoomId))
+                    if (!ClassRoomExists(classRoom.ClassroomId))
                     {
                         return NotFound();
                     }
@@ -133,7 +189,16 @@ namespace ClassRoomMvc.Controllers
                 return NotFound();
             }
 
-            return View(classRoom);
+            var classroomToDelete = new ClassroomViewModel()
+            {
+                Name = classRoom.Name,
+                Students = classRoom.Students,
+                Capacity = classRoom.Capacity,
+                Assignments = classRoom.Assignments,
+                Teacher = classRoom.Teacher,
+            };
+
+            return View(classroomToDelete);
         }
 
         // POST: ClassRooms/Delete/5
