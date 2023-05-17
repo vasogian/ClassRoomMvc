@@ -4,6 +4,7 @@ using ClassRoomMvc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClassRoomMvc.Migrations
 {
     [DbContext(typeof(ClassRoomMvcContext))]
-    partial class ClassRoomMvcContextModelSnapshot : ModelSnapshot
+    [Migration("20230517120546_changed_assignment_model")]
+    partial class changed_assignment_model
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +23,6 @@ namespace ClassRoomMvc.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("AssignmentStudent", b =>
-                {
-                    b.Property<int>("AssignmentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StudentsStudentId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AssignmentId", "StudentsStudentId");
-
-                    b.HasIndex("StudentsStudentId");
-
-                    b.ToTable("AssignmentStudent");
-                });
 
             modelBuilder.Entity("ClassRoomMvc.Models.Assignment", b =>
                 {
@@ -61,6 +48,8 @@ namespace ClassRoomMvc.Migrations
                     b.HasKey("AssignmentId");
 
                     b.HasIndex("ClassRoomId");
+
+                    b.HasIndex("StudentId");
 
                     b.ToTable("Assignment");
                 });
@@ -138,26 +127,15 @@ namespace ClassRoomMvc.Migrations
                     b.ToTable("Teacher");
                 });
 
-            modelBuilder.Entity("AssignmentStudent", b =>
-                {
-                    b.HasOne("ClassRoomMvc.Models.Assignment", null)
-                        .WithMany()
-                        .HasForeignKey("AssignmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ClassRoomMvc.Models.Student", null)
-                        .WithMany()
-                        .HasForeignKey("StudentsStudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ClassRoomMvc.Models.Assignment", b =>
                 {
                     b.HasOne("ClassRoomMvc.Models.ClassRoom", null)
                         .WithMany("Assignments")
                         .HasForeignKey("ClassRoomId");
+
+                    b.HasOne("ClassRoomMvc.Models.Student", null)
+                        .WithMany("Assignment")
+                        .HasForeignKey("StudentId");
                 });
 
             modelBuilder.Entity("ClassRoomMvc.Models.Student", b =>
@@ -185,6 +163,11 @@ namespace ClassRoomMvc.Migrations
                     b.Navigation("Students");
 
                     b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("ClassRoomMvc.Models.Student", b =>
+                {
+                    b.Navigation("Assignment");
                 });
 #pragma warning restore 612, 618
         }

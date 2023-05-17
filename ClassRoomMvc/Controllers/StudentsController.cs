@@ -37,6 +37,7 @@ namespace ClassRoomMvc.Controllers
             }
 
             var student = await _context.Student
+                .Include(x=>x.Assignment).Where(c=>c.StudentId == id)
                 .FirstOrDefaultAsync(m => m.StudentId == id);
             if (student == null)
             {
@@ -74,6 +75,7 @@ namespace ClassRoomMvc.Controllers
         {
 
             ViewData["ClassRoomId"] = new SelectList(_context.ClassRoom, "ClassRoomId", "ClassRoomId");
+            ViewData["AssignmentId"] = new SelectList(_context.ClassRoom, "AssignmentId", "AssignmentId");
 
             if (id == null || _context.Student == null)
             {
@@ -94,7 +96,7 @@ namespace ClassRoomMvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("StudentId,StudentName,StudentLastName,ClassRoomId")] Student student)
+        public async Task<IActionResult> Edit(int id, [Bind("StudentId,StudentName,StudentLastName,ClassRoomId,AssignmentId")] Student student)
         {
 
             if (id != student.StudentId)
