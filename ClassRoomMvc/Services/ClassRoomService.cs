@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClassRoomMvc.Services
 {
+
+    //Δεν είχα χρόνο να τα χρησιμοποιήσω. Είχα σκοπό να τα κάνω inject στους αντίστοιχους controllers.
     public class ClassRoomService
     {
         private readonly ClassRoomMvcContext _context;
@@ -50,7 +52,7 @@ namespace ClassRoomMvc.Services
             }
             return new ClassRoom();
         }
-     
+
 
         public async Task<ClassRoom> DeleteClassRoom(int id)
         {

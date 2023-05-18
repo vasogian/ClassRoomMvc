@@ -1,4 +1,4 @@
-﻿@model ClassRoomMvc.Models.Student
+﻿@model ClassRoomMvc.ViewModels.StudentViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -28,6 +28,21 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.ClassRoomId)
         </dd>
+        @foreach (var assignment in Model.Assignment)
+		{
+            <dt class="col-sm-2">
+                AssignmentId
+            </dt>
+			<dd class="col-sm-2">
+				@assignment.AssignmentId
+			</dd>
+            <dt class="col-sm-2">
+                Grade
+            </dt>
+            <dd class="col-sm-2">
+                @assignment.Grade
+            </dd>
+		}
     </dl>
 </div>
 <div>

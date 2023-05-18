@@ -1,4 +1,4 @@
-﻿@model ClassRoomMvc.Models.ClassRoom
+﻿@model ClassRoomMvc.ViewModels.ClassroomViewModel
 
 @{
     ViewData["Title"] = "Delete";
@@ -26,7 +26,7 @@
     </dl>
     
     <form asp-action="Delete">
-        <input type="hidden" asp-for="ClassRoomId" />
+        <input type="hidden" asp-for="ClassroomId" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>
