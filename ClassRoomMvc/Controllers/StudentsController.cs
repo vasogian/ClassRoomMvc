@@ -150,7 +150,7 @@ namespace ClassRoomMvc.Controllers
 
             if (ModelState.IsValid)
             {
-             
+
                 var assignmentFromDb = await _context.Assignment.FirstOrDefaultAsync(x => x.AssignmentId == student.AssignmentId);
                 var studentToEdit = new Student()
                 {
