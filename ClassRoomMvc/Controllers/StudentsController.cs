@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ClassRoomMvc.Data;
 using ClassRoomMvc.Models;
+using ClassRoomMvc.ViewModels;
 
 namespace ClassRoomMvc.Controllers
 {
@@ -22,9 +23,25 @@ namespace ClassRoomMvc.Controllers
         // GET: Students
         public async Task<IActionResult> Index()
         {
-            return _context.Student != null ?
-                        View(await _context.Student.ToListAsync()) :
-                        Problem("Entity set 'ClassRoomMvcContext.Student'  is null.");
+            var studentsFromDb = await _context.Student.ToListAsync();
+            var studentViewModels = new List<StudentViewModel>();
+
+            if (studentsFromDb.Any())
+            {
+                foreach (var student in studentsFromDb)
+                {
+                    studentViewModels.Add(new StudentViewModel
+                    {
+                        StudentId = student.StudentId,
+                        StudentName = student.StudentName,
+                        StudentLastName = student.StudentLastName,
+                        Assignment = student.Assignment,
+                        ClassRoomId = student.ClassRoomId
+                    });
+                }
+            }
+
+            return View(studentViewModels);
         }
 
         // GET: Students/Details/5
@@ -45,8 +62,17 @@ namespace ClassRoomMvc.Controllers
             {
                 return NotFound();
             }
+            var selectedStudent = new StudentViewModel()
+            {
+                StudentName = student.StudentName,
+                StudentLastName = student.StudentLastName,
+                StudentId = student.StudentId,
+                Assignment = student.Assignment,
+                ClassRoomId = student.ClassRoomId
 
-            return View(student);
+            };
+
+            return View(selectedStudent);
         }
 
         // GET: Students/Create
@@ -60,12 +86,21 @@ namespace ClassRoomMvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("StudentId,StudentName,StudentLastName")] Student student)
+        public async Task<IActionResult> Create([Bind("StudentId,StudentName,StudentLastName")] StudentViewModel student)
         {
+            var studentToCreate = new Student()
+            {
+                StudentLastName = student.StudentLastName,
+                StudentId = student.StudentId,
+                StudentName = student.StudentName,
+                Assignment = student.Assignment,
+                ClassRoomId = student.ClassRoomId
+
+            };
 
             if (ModelState.IsValid)
             {
-                _context.Add(student);
+                _context.Add(studentToCreate);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -98,7 +133,7 @@ namespace ClassRoomMvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("StudentId,StudentName,StudentLastName,ClassRoomId")] Student student)
+        public async Task<IActionResult> Edit(int id, [Bind("StudentId,StudentName,StudentLastName,ClassRoomId")] UpdateStudentViewModel student)
         {
             if (id != student.StudentId)
             {
@@ -107,7 +142,7 @@ namespace ClassRoomMvc.Controllers
 
             if (ModelState.IsValid)
             {
-                var assignmentFromDb = await _context.Assignment.FirstOrDefaultAsync(x => x.AssignmentId == 1);
+                var assignmentFromDb = await _context.Assignment.FirstOrDefaultAsync(x => x.AssignmentId == student.AssignmentId);
 
                 if (assignmentFromDb != null)
                 {

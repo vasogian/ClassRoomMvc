@@ -1,0 +1,13 @@
+﻿using ClassRoomMvc.Models;
+
+namespace ClassRoomMvc.ViewModels
+{
+    public class StudentViewModel
+    {
+        public int StudentId { get; set; }
+        public string StudentName { get; set; }
+        public string StudentLastName { get; set; }
+        public int? ClassRoomId { get; set; }
+        public ICollection<Assignment>? Assignment { get; set; } = new List<Assignment>();
+    }
+}
