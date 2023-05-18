@@ -125,7 +125,15 @@ namespace ClassRoomMvc.Controllers
             {
                 return NotFound();
             }
-            return View(student);
+            var studentToEdit = new UpdateStudentViewModel()
+            {
+                StudentId = student.StudentId,
+                StudentLastName = student.StudentLastName,
+                StudentName = student.StudentName,
+                Assignment = student.Assignment,
+                AssignmentId = student.AssignmentId,
+            };
+            return View(studentToEdit);
         }
 
         // POST: Students/Edit/5
@@ -133,7 +141,7 @@ namespace ClassRoomMvc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("StudentId,StudentName,StudentLastName,ClassRoomId")] UpdateStudentViewModel student)
+        public async Task<IActionResult> Edit(int id, [Bind("StudentId,StudentName,StudentLastName,ClassRoomId,AssignmentId")] UpdateStudentViewModel student)
         {
             if (id != student.StudentId)
             {
@@ -142,7 +150,17 @@ namespace ClassRoomMvc.Controllers
 
             if (ModelState.IsValid)
             {
+             
                 var assignmentFromDb = await _context.Assignment.FirstOrDefaultAsync(x => x.AssignmentId == student.AssignmentId);
+                var studentToEdit = new Student()
+                {
+                    StudentId = student.StudentId,
+                    StudentName = student.StudentName,
+                    StudentLastName = student.StudentLastName,
+                    AssignmentId = student.AssignmentId,
+                    Assignment = student.Assignment,
+                    ClassRoomId = student.ClassRoomId,
+                };
 
                 if (assignmentFromDb != null)
                 {
@@ -151,7 +169,7 @@ namespace ClassRoomMvc.Controllers
 
                 try
                 {
-                    _context.Update(student);
+                    _context.Update(studentToEdit);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
