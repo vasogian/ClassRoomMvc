@@ -204,7 +204,16 @@ namespace ClassRoomMvc.Controllers
                 return NotFound();
             }
 
-            return View(student);
+            var studentToDelete = new StudentViewModel()
+            {
+                StudentId = student.StudentId,
+                StudentName = student.StudentName,
+                StudentLastName = student.StudentLastName,
+                Assignment = student.Assignment,
+                AssignmentId = student.AssignmentId,
+                ClassRoomId = student.ClassRoomId
+            };
+            return View(studentToDelete);
         }
 
         // POST: Students/Delete/5
